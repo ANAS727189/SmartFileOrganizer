@@ -1,0 +1,182 @@
+<!-- Chart.js inclusion fix -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Terminal File Organizer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <!-- Make sure Chart.js is loaded from CDN if node_modules isn't available -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Optional: Add PDF.js for PDF preview -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+</head>
+<body>
+    <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+    <div class="terminal">
+       
+        <div class="terminal-header">
+            <h1 class="terminal-title">TERMINAL FILE ORGANIZER v1.0</h1>
+            <div class="terminal-controls">
+                <div class="window-controls">
+                    <button class="window-control" id="minimizeBtn">&#8722;</button>
+                    <button class="window-control" id="maximizeBtn">&#9744;</button>
+                    <button class="window-control close" id="closeBtn">&#10005;</button>
+                </div>
+                <div class="terminal-tabs">
+                    <button class="terminal-tab active" data-tab="main">Main</button>
+                    <button class="terminal-tab" data-tab="stats">Stats</button>
+                    <button class="terminal-tab" data-tab="settings">Settings</button>
+                    <button class="terminal-tab" data-tab="help">Help</button>
+                    <button class="terminal-tab" data-tab="analytics">Analytics</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="terminal-body">
+            <div class="terminal-output" id="output">
+                <div class="ascii-art">
+
+                    ________  __  __                   ______                                           __                               
+                    /        |/  |/  |                 /      \                                         /  |                              
+                    $$$$$$$$/ $$/ $$ |  ______        /$$$$$$  |  ______    ______    ______   _______  $$/   _______   ______    ______  
+                    $$ |__    /  |$$ | /      \       $$ |  $$ | /      \  /      \  /      \ /       \ /  | /       | /      \  /      \ 
+                    $$    |   $$ |$$ |/$$$$$$  |      $$ |  $$ |/$$$$$$  |/$$$$$$  | $$$$$$  |$$$$$$$  |$$ |/$$$$$$$/ /$$$$$$  |/$$$$$$  |
+                    $$$$$/    $$ |$$ |$$    $$ |      $$ |  $$ |$$ |  $$/ $$ |  $$ | /    $$ |$$ |  $$ |$$ |$$      \ $$    $$ |$$ |  $$/ 
+                    $$ |      $$ |$$ |$$$$$$$$/       $$ \__$$ |$$ |      $$ \__$$ |/$$$$$$$ |$$ |  $$ |$$ | $$$$$$  |$$$$$$$$/ $$ |      
+                    $$ |      $$ |$$ |$$       |      $$    $$/ $$ |      $$    $$ |$$    $$ |$$ |  $$ |$$ |/     $$/ $$       |$$ |      
+                    $$/       $$/ $$/  $$$$$$$/        $$$$$$/  $$/        $$$$$$$ | $$$$$$$/ $$/   $$/ $$/ $$$$$$$/   $$$$$$$/ $$/       
+                                                                          /  \__$$ |                                                      
+                                                                          $$    $$/                                                       
+                                                                           $$$$$$/                                                        
+                    
+                </div>
+                Welcome to Terminal File Organizer!
+                Type 'help' for commands or use the form below.
+            </div>
+            
+            <div class="terminal-input-area" id="mainTab">
+                <div class="terminal-options">
+                    <div class="option-row">
+                        <div class="option-group">
+                            <div class="select-wrapper">
+                                <select id="modeSelect">
+                                    <option value="type">Organize by Type</option>
+                                    <option value="date">Organize by Date</option>
+                                    <option value="size">Organize by Size</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="removeDuplicates">
+                                <span class="checkbox-custom"></span>
+                                Remove Duplicates
+                            </label>
+                        </div>
+                        <div>
+                            <div class="file-list" id="fileList"></div>
+                            <div class="preview-modal" id="previewModal" style="display: none;">
+                                <div class="preview-content">
+                                    <button id="closePreviewBtn">Close</button>
+                                    <div id="previewArea"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="watcher-controls">
+                            <button id="startWatcherBtn"><i class="fas fa-play"></i> Start Watcher</button>
+                            <button id="stopWatcherBtn"><i class="fas fa-stop"></i> Stop Watcher</button>
+                        </div>
+                        
+                        <button id="organizeBtn"><i class="fas fa-magic"></i> Organize Files</button>
+                    </div>
+                    
+                    <div class="search-container">
+                        <div class="search-area">
+                            <input type="text" id="searchInput" class="command-input" placeholder="Search (e.g., name:doc, tag:work)">
+                        </div>
+                        <div id="searchResults" class="search-results"></div>
+                    </div>
+                </div>
+                
+                <div class="command-line">
+                    <span class="prompt">$></span>
+                    <input type="text" id="pathInput" class="command-input" placeholder="Enter directory path or type a command...">
+                    <button id="browseBtn"><i class="fas fa-folder-open"></i></button>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+            
+
+            <div class="file-stats" style="display: none;" id="statsTab">
+                <div class="file-stat">
+                    Files: <span class="stat-value" id="fileCount">0</span>
+                </div>
+                <div class="file-stat">
+                    Duplicates: <span class="stat-value" id="dupCount">0</span>
+                </div>
+                <div class="file-stat">
+                    Space Saved: <span class="stat-value" id="spaceSaved">0 KB</span>
+                </div>
+                <div class="file-stat">
+                    Last Run: <span class="stat-value" id="lastRun">Never</span>
+                </div>
+            </div>
+
+            <div class="settings-panel" id="settingsTab" style="display: none;">
+                <div class="category-list" id="categoryList"></div>
+                <div class="category-form">
+                    <input type="text" id="categoryName" placeholder="Category Name (e.g., Music 🎵)">
+                    <input type="text" id="categoryExts" placeholder="Extensions (e.g., .mp3, .wav)">
+                    <button id="addCategoryBtn"><i class="fas fa-plus"></i> Add Category</button>
+                    <button id="saveSettingsBtn"><i class="fas fa-save"></i> Save Settings</button>
+                </div>
+            </div>
+            
+            <div class="help-panel" id="helpTab" style="display: none;">
+                <div class="help-commands">
+                    <span class="help-command">organize [path]</span>
+                    <span>Organize files in the specified path</span>
+                    
+                    <span class="help-command">mode [type/date/size]</span>
+                    <span>Set organizing mode</span>
+                    
+                    <span class="help-command">duplicates [on/off]</span>
+                    <span>Enable/disable duplicate removal</span>
+                    
+                    <span class="help-command">stats</span>
+                    <span>Show file statistics</span>
+                    
+                    <span class="help-command">clear</span>
+                    <span>Clear terminal output</span>
+                    
+                    <span class="help-command">help</span>
+                    <span>Show this help</span>
+                </div>
+            </div>
+
+            <div class="analytics-panel" style="display: none;" id="analyticsTab">
+                <h2 class="analytics-title">File Analytics</h2>
+                <div class="analytics-container">
+                    <div class="chart-container">
+                        <canvas id="fileTypeChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="fileSizeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        </div>
+    </div>
+    
+    <div class="terminal-notifications" id="notifications"></div>
+    <script src="./js/renderer.js"></script>
+</body>
+</html>

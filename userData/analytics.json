@@ -1,0 +1,15 @@
+{
+  "fileTypes": {
+    "mp4": 3
+  },
+  "sizeCategories": {
+    "Tiny (<100KB)": 0,
+    "Small (100KB-1MB)": 0,
+    "Medium (1MB-100MB)": 3,
+    "Large (100MB-1GB)": 0,
+    "Huge (>1GB)": 0
+  },
+  "totalFilesOrganized": 3,
+  "totalDuplicatesRemoved": 0,
+  "totalSpaceSaved": 0
+}
