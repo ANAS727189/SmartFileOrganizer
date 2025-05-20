@@ -816,3 +816,259 @@ button i {
         margin: 5px 0;
     }
 }
+
+/* Onboarding Modal Styles - Renamed to avoid conflicts */
+.onboarding-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+}
+
+.onboarding-modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    max-width: 90%;
+}
+
+/* Terminal Window Styling for Onboarding */
+.onboarding-terminal-window {
+    background-color: var(--panel-bg);
+    border: 2px solid var(--glow-color);
+    border-radius: 8px;
+    box-shadow: 0 0 20px var(--glow-color), 0 0 30px rgba(0, 255, 196, 0.3);
+    overflow: hidden;
+}
+
+.onboarding-terminal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 8px 15px;
+    border-bottom: 1px solid var(--glow-color);
+}
+
+.onboarding-window-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.onboarding-window-control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #555;
+    display: inline-block;
+}
+
+.onboarding-window-control:first-child {
+    background-color: #FF5F56;
+}
+
+.onboarding-window-control:nth-child(2) {
+    background-color: #FFBD2E;
+}
+
+.onboarding-window-control:nth-child(3) {
+    background-color: #27C93F;
+}
+
+.onboarding-terminal-title {
+    color: var(--glow-color);
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px var(--glow-color);
+}
+
+.onboarding-terminal-body {
+    padding: 30px;
+    color: #ddd;
+    text-align: center;
+}
+
+/* Robot and Animation Styles */
+.robot-container {
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.robot-animation {
+    position: relative;
+    display: inline-block;
+}
+
+.robot-image {
+    width: 180px;
+    height: auto;
+    filter: drop-shadow(0 0 8px var(--glow-color));
+}
+
+.robot-glow {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 20px;
+    background: radial-gradient(ellipse at center, var(--glow-color) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: pulse 2s infinite;
+}
+
+/* Typing Animation */
+.onboarding-typing-animation {
+    margin: 20px 0;
+}
+
+.onboarding-typing-text {
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    color: #fff;
+    border-right: 2px solid var(--glow-color);
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+/* Loading Bar for Onboarding */
+.onboarding-progress-container {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin: 30px 0;
+    overflow: hidden;
+}
+
+.onboarding-loading-bar {
+    height: 100%;
+    width: 0%;
+    background-color: var(--glow-color);
+    animation: loading 3s forwards;
+}
+
+/* Audio Visualizer */
+.onboarding-audio-visualizer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    height: 30px;
+    margin-bottom: 20px;
+}
+
+.onboarding-audio-visualizer .onboarding-bar {
+    width: 4px;
+    height: 100%;
+    background-color: var(--glow-color);
+    border-radius: 2px;
+    animation: audioVisualization 1.2s infinite ease-in-out;
+}
+
+.onboarding-audio-visualizer .onboarding-bar:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.onboarding-audio-visualizer .onboarding-bar:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.onboarding-audio-visualizer .onboarding-bar:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.onboarding-audio-visualizer .onboarding-bar:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+.onboarding-audio-visualizer .onboarding-bar:nth-child(5) {
+    animation-delay: 0.8s;
+}
+
+/* Button Styles for Onboarding */
+.onboarding-button-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.onboarding-terminal-btn {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #ddd;
+    border: 1px solid var(--glow-color);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.onboarding-terminal-btn:hover {
+    background-color: var(--glow-color);
+    color: #000;
+    box-shadow: 0 0 10px var(--glow-color);
+}
+
+.onboarding-terminal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #555;
+}
+
+.onboarding-terminal-btn:disabled:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #ddd;
+    box-shadow: none;
+}
+
+.onboarding-terminal-btn i {
+    margin-right: 6px;
+}
+
+/* Hide audio element */
+audio {
+    display: none;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.5; }
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--glow-color) }
+}
+
+@keyframes loading {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+@keyframes audioVisualization {
+    0%, 100% { height: 15%; }
+    50% { height: 100%; }
+}

@@ -13,6 +13,48 @@
 </head>
 <body>
     <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+<!-- Onboarding Modal -->
+<div id="onboardingModal" class="onboarding-modal">
+    <div class="onboarding-modal-content">
+        <div class="onboarding-terminal-window">
+            <div class="onboarding-terminal-header">
+                <div class="onboarding-window-controls">
+                    <span class="onboarding-window-control"></span>
+                    <span class="onboarding-window-control"></span>
+                    <span class="onboarding-window-control"></span>
+                </div>
+                <div class="onboarding-terminal-title">SYSTEM INITIALIZATION</div>
+            </div>
+            <div class="onboarding-terminal-body">
+                <div class="robot-container">
+                    <div class="robot-animation">
+                        <img src="../assets/robot-terminal.png" alt="Robot" class="robot-image">
+                        <div class="robot-glow"></div>
+                    </div>
+                    <div class="onboarding-typing-animation">
+                        <div id="typingText" class="onboarding-typing-text">Initializing Terminal File Organizer...</div>
+                    </div>
+                </div>
+                <div class="onboarding-progress-container">
+                    <div id="loadingBar" class="onboarding-loading-bar"></div>
+                </div>
+                <div class="onboarding-audio-visualizer">
+                    <div class="onboarding-bar"></div>
+                    <div class="onboarding-bar"></div>
+                    <div class="onboarding-bar"></div>
+                    <div class="onboarding-bar"></div>
+                    <div class="onboarding-bar"></div>
+                </div>
+                <audio id="onboardingAudio" src="../assets/filename.wav"></audio>
+            </div>
+            <div class="onboarding-button-container">
+                <button id="skipBtn" class="onboarding-terminal-btn"><i class="fas fa-forward"></i> Skip</button>
+                <button id="nextBtn" class="onboarding-terminal-btn" disabled><i class="fas fa-arrow-right"></i> Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div class="terminal">
        
         <div class="terminal-header">

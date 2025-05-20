@@ -82,6 +82,125 @@ async function loadAnalyticsData() {
     }
 }
 
+// Onboarding Modal Logic
+document.addEventListener('DOMContentLoaded', () => {
+    // const isFirstTime = !localStorage.getItem('hasOpenedApp');
+    // if (isFirstTime) {
+        showOnboardingModal();
+    //     localStorage.setItem('hasOpenedApp', 'true');
+    // }
+});
+
+
+function showOnboardingModal() {
+    const modal = document.getElementById('onboardingModal');
+    const audio = document.getElementById('onboardingAudio');
+    const nextBtn = document.getElementById('nextBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const mainContent = document.querySelector('.terminal');
+    const loadingBar = document.getElementById('loadingBar');
+    const typingText = document.getElementById('typingText');
+    const visualizerBars = document.querySelectorAll('.onboarding-audio-visualizer .onboarding-bar');
+    
+    // Typing animation setup
+    typingText.style.width = '0';
+    
+    // Show modal and blur background
+    modal.style.display = 'block';
+    mainContent.style.filter = 'blur(5px)';
+    
+    // Terminal messages to display sequentially
+    const messages = [
+        "Initializing Terminal File Organizer...",
+        "Establishing secure connection...",
+        "Loading system protocols...",
+        "Scanning filesystem architecture...",
+        "Calibrating file detection algorithms...",
+        "Optimizing memory allocation...",
+        "Verifying integrity of file handlers...",
+        "Initializing pattern recognition module...",
+        "Setting up real-time monitoring services...",
+        "Configuring analytics engine...",
+        "Welcome to Terminal File Organizer v1.0!"
+    ];
+    
+    let currentMessageIndex = 0;
+    
+    // Function to simulate typing effect
+    function typeNextMessage() {
+        if (currentMessageIndex < messages.length) {
+            const message = messages[currentMessageIndex];
+            typingText.textContent = "";
+            typingText.style.animation = 'none';
+            
+            // Trigger reflow
+            void typingText.offsetWidth;
+            
+            typingText.textContent = message;
+            typingText.style.animation = `typing 2s steps(${message.length}, end), blink-caret 0.75s step-end infinite`;
+            
+            currentMessageIndex++;
+            
+            // Schedule next message
+            if (currentMessageIndex < messages.length) {
+                setTimeout(typeNextMessage, 3000);
+            }
+        }else {
+            currentMessageIndex = 0; // Loop again
+            setTimeout(typeNextMessage, 1000);
+        }
+    }
+    
+    // Start the typing animation
+    typeNextMessage();
+    
+    // Play audio with visualizer animation
+    audio.play();
+    
+    // Animate loading bar based on audio duration
+    audio.addEventListener('timeupdate', () => {
+        const progress = (audio.currentTime / audio.duration) * 100;
+        loadingBar.style.width = `${progress}%`;
+    });
+    
+    // Enable next button when audio ends
+    audio.onended = () => {
+        nextBtn.disabled = false;
+        visualizerBars.forEach(bar => {
+            bar.style.animation = 'none';
+        });
+    };
+    
+    // Add audio visualization
+    function updateVisualizer() {
+        if (audio.paused) return;
+        
+        // In an actual implementation, we would analyze audio data using Web Audio API
+        // For the demo, we're just creating a random visualization
+        visualizerBars.forEach(bar => {
+            const height = Math.random() * 100;
+            bar.style.height = `${height}%`;
+        });
+        
+        requestAnimationFrame(updateVisualizer);
+    }
+    
+    audio.addEventListener('play', () => {
+        updateVisualizer();
+    });
+    
+    // Close modal on skip or next button click
+    skipBtn.addEventListener('click', closeModal);
+    nextBtn.addEventListener('click', closeModal);
+    
+    function closeModal() {
+        audio.pause();
+        audio.currentTime = 0;
+        modal.style.display = 'none';
+        mainContent.style.filter = 'none';
+    }
+}
+
 async function updateAnalyticsData(newFiles) {
     try {
         const currentData = await loadAnalyticsData();
