@@ -82,7 +82,9 @@ async function loadAnalyticsData() {
     }
 }
 
-// Onboarding Modal Logic
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // const isFirstTime = !localStorage.getItem('hasOpenedApp');
     // if (isFirstTime) {
@@ -101,15 +103,9 @@ function showOnboardingModal() {
     const loadingBar = document.getElementById('loadingBar');
     const typingText = document.getElementById('typingText');
     const visualizerBars = document.querySelectorAll('.onboarding-audio-visualizer .onboarding-bar');
-    
-    // Typing animation setup
     typingText.style.width = '0';
-    
-    // Show modal and blur background
     modal.style.display = 'block';
     mainContent.style.filter = 'blur(5px)';
-    
-    // Terminal messages to display sequentially
     const messages = [
         "Initializing Terminal File Organizer...",
         "Establishing secure connection...",
@@ -125,58 +121,38 @@ function showOnboardingModal() {
     ];
     
     let currentMessageIndex = 0;
-    
-    // Function to simulate typing effect
     function typeNextMessage() {
         if (currentMessageIndex < messages.length) {
             const message = messages[currentMessageIndex];
             typingText.textContent = "";
             typingText.style.animation = 'none';
-            
-            // Trigger reflow
             void typingText.offsetWidth;
-            
             typingText.textContent = message;
             typingText.style.animation = `typing 2s steps(${message.length}, end), blink-caret 0.75s step-end infinite`;
             
             currentMessageIndex++;
-            
-            // Schedule next message
             if (currentMessageIndex < messages.length) {
                 setTimeout(typeNextMessage, 3000);
             }
         }else {
-            currentMessageIndex = 0; // Loop again
+            currentMessageIndex = 0;
             setTimeout(typeNextMessage, 1000);
         }
     }
-    
-    // Start the typing animation
     typeNextMessage();
-    
-    // Play audio with visualizer animation
     audio.play();
-    
-    // Animate loading bar based on audio duration
     audio.addEventListener('timeupdate', () => {
         const progress = (audio.currentTime / audio.duration) * 100;
         loadingBar.style.width = `${progress}%`;
     });
-    
-    // Enable next button when audio ends
     audio.onended = () => {
         nextBtn.disabled = false;
         visualizerBars.forEach(bar => {
             bar.style.animation = 'none';
         });
     };
-    
-    // Add audio visualization
     function updateVisualizer() {
         if (audio.paused) return;
-        
-        // In an actual implementation, we would analyze audio data using Web Audio API
-        // For the demo, we're just creating a random visualization
         visualizerBars.forEach(bar => {
             const height = Math.random() * 100;
             bar.style.height = `${height}%`;
@@ -188,8 +164,6 @@ function showOnboardingModal() {
     audio.addEventListener('play', () => {
         updateVisualizer();
     });
-    
-    // Close modal on skip or next button click
     skipBtn.addEventListener('click', closeModal);
     nextBtn.addEventListener('click', closeModal);
     
@@ -300,12 +274,9 @@ async function updateAnalytics() {
 `;
 
 try {
-    // Enhanced Pie Chart for File Types
     const pieCtx = document.getElementById('fileTypeChart').getContext('2d');
     const fileTypes = Object.keys(analyticsData.fileTypes);
     const fileTypeCounts = Object.values(analyticsData.fileTypes);
-    
-    // Generate a nicer gradient color palette
     const colorPalette = generateColorPalette(fileTypes.length);
     
     fileTypeChart = new Chart(pieCtx, {
@@ -362,8 +333,6 @@ try {
             }
         }
     });
-
-    // Enhanced Bar Chart for File Sizes
     const barCtx = document.getElementById('fileSizeChart').getContext('2d');
     const sizeCategories = Object.keys(analyticsData.sizeCategories);
     const sizeCounts = Object.values(analyticsData.sizeCategories);
@@ -432,7 +401,6 @@ try {
         }
     });
 
-    // New Chart: Efficiency Gauge Chart
     const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
     const totalFilesBeforeOpt = analyticsData.totalFilesOrganized + analyticsData.totalDuplicatesRemoved;
     const efficiencyPercentage = totalFilesBeforeOpt > 0 
@@ -465,7 +433,6 @@ try {
         }
     });
 
-    // Add efficiency percentage text in the center
     const efficiency = efficiencyPercentage;
     const centerText = {
         id: 'centerText',
@@ -489,10 +456,7 @@ try {
     };
     
     Chart.register(centerText);
-
-    // New Chart: File Activity Line Chart (simulated data based on total files)
     const fileActivityCtx = document.getElementById('fileActivityChart').getContext('2d');
-    // Generate some activity data based on total files
     const activityData = generateActivityData(analyticsData.totalFilesOrganized || 0);
     
     window.fileActivityChart = new Chart(fileActivityCtx, {
@@ -532,12 +496,8 @@ try {
             maintainAspectRatio: false
         }
     });
-
-    // New Chart: Category Distribution Radar Chart
     const catDistCtx = document.getElementById('categoryDistributionChart').getContext('2d');
-    // Generate category data from settings and analytics
     const categoryData = generateCategoryData(settings, analyticsData);
-    
     window.categoryDistributionChart = new Chart(catDistCtx, {
         type: 'radar',
         data: {
@@ -590,24 +550,22 @@ try {
 function generateColorPalette(count) {
     const colors = [];
     for (let i = 0; i < count; i++) {
-        // Create variations of green with different brightness and saturation
-        const hue = 120; // Green hue
-        const saturation = 80 + Math.random() * 20; // 80-100%
-        const lightness = 30 + (i * 40 / count); // Distribute lightness
+        const hue = 120; 
+        const saturation = 80 + Math.random() * 20; 
+        const lightness = 30 + (i * 40 / count); 
         colors.push(`hsla(${hue}, ${saturation}%, ${lightness}%, 0.9)`);
     }
     return colors;
 }
 
-// Helper function to generate simulated activity data
+
 function generateActivityData(totalFiles) {
     const labels = ['7 days ago', '6 days ago', '5 days ago', '4 days ago', '3 days ago', '2 days ago', 'Today'];
     const values = [];
     const baseValue = totalFiles > 7 ? Math.floor(totalFiles / 7) : 1;
     
     for (let i = 0; i < 7; i++) {
-        // Simulate some variance in the daily numbers
-        const variance = Math.floor(baseValue * (Math.random() * 0.6 - 0.3)); // ±30%
+        const variance = Math.floor(baseValue * (Math.random() * 0.6 - 0.3)); 
         const value = Math.max(0, baseValue + variance);
         values.push(value);
     }
@@ -615,30 +573,21 @@ function generateActivityData(totalFiles) {
     return { labels, values };
 }
 function generateCategoryData(settings, analyticsData) {
-    // First, use categories from settings
     let labels = Object.keys(settings.categories || {});
-    
-    // If no settings categories exist, create default categories based on file types
     if (labels.length === 0) {
         const fileTypes = Object.keys(analyticsData.fileTypes || {});
         labels = groupFileTypesIntoCategories(fileTypes);
     }
-    
-    // Ensure we have at least some categories for the visualization
     if (labels.length === 0) {
         labels = ['Documents', 'Images', 'Videos', 'Audio', 'Archives', 'Code', 'Other'];
     }
-    
-    // Generate distribution values based on file types or make up reasonable data
     const values = [];
     const totalFiles = analyticsData.totalFilesOrganized || 0;
     
     labels.forEach(label => {
-        // Try to match label with file types or use a generated value
         if (analyticsData.fileTypes && analyticsData.fileTypes[label.toLowerCase()]) {
             values.push(analyticsData.fileTypes[label.toLowerCase()]);
         } else {
-            // Generate a reasonable value based on total files
             values.push(Math.floor(totalFiles * Math.random() * 0.3));
         }
     });
@@ -646,7 +595,7 @@ function generateCategoryData(settings, analyticsData) {
     return { labels, values };
 }
 
-// Helper function to group file types into logical categories
+
 function groupFileTypesIntoCategories(fileTypes) {
     const categoryMap = {
         documents: ['pdf', 'doc', 'docx', 'txt', 'rtf', 'odt', 'md', 'pages'],
@@ -657,7 +606,6 @@ function groupFileTypesIntoCategories(fileTypes) {
         code: ['js', 'py', 'java', 'c', 'cpp', 'cs', 'html', 'css', 'php', 'rb']
     };
     
-    // Count file types per category
     const categories = {};
     fileTypes.forEach(type => {
         const lowType = type.toLowerCase();
@@ -696,7 +644,6 @@ function renderFileList() {
 async function previewFile(filePath) {
     console.log('Attempting to preview file:', filePath);
         try {
-            // Check if file exists
             await fs.access(filePath);
             console.log('File exists');
     
@@ -983,11 +930,9 @@ ipcRenderer.on('watcher-status', (event, message) => {
 
 
 
-// Matrix background effect
 const canvas = document.getElementById('matrixCanvas');
 const ctx = canvas.getContext('2d');
 
-// Initialize stats from localStorage
 async function initStats() {
     const analyticsData = await loadAnalyticsData();
     fileCount.textContent = analyticsData.totalFilesOrganized || '0';
@@ -997,7 +942,7 @@ async function initStats() {
 }
 
 
-// Update stats
+
 function updateStats(files, dups, space) {
     localStorage.setItem('fileCount', files);
     localStorage.setItem('dupCount', dups);
@@ -1010,7 +955,7 @@ function updateStats(files, dups, space) {
     lastRun.textContent = new Date().toLocaleString();
 }
 
-// Format file size
+
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 KB';
     const k = 1024;
@@ -1019,7 +964,7 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// Tab switching
+
 const tabContents = {
     main: mainTab,
     stats: statsTab,
@@ -1032,11 +977,10 @@ tabs.forEach(tab => {
     tab.addEventListener('click', async () => {
         const tabName = tab.dataset.tab;
         
-        // Update active tab button
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         
-        // Manage tab content display and active-tab class
+
         Object.values(tabContents).forEach(content => {
             content.style.display = 'none';
             content.classList.remove('active-tab');
@@ -1046,7 +990,7 @@ tabs.forEach(tab => {
         activeTab.style.display = (tabName === 'main' || tabName === 'stats') ? 'flex' : 'block';
         if (tabName === 'analytics') activeTab.classList.add('active-tab');
         
-        // Tab-specific actions
+
         output.style.display = tabName === 'main' ? 'block' : 'none';
         if (tabName === 'analytics') await updateAnalytics();
         if (tabName === 'stats') await initStats();
@@ -1067,7 +1011,6 @@ output.style.display = 'block';
 
 
 
-// Browse Folder Dialog
 browseBtn.addEventListener('click', () => {
     ipcRenderer.invoke('open-folder-dialog').then((result) => {
         if (result && !result.canceled && result.filePaths.length > 0) {
@@ -1263,6 +1206,229 @@ function organizeFiles() {
     });
 }
 
+function initializeHelpTab() {
+    const helpSearch = document.getElementById('helpSearch');
+    const helpSearchResults = document.getElementById('helpSearchResults');
+    const helpCommands = document.getElementById('helpCommands');
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    // Search functionality
+    helpSearch.addEventListener('input', () => {
+        const query = helpSearch.value.trim().toLowerCase();
+        const commandItems = helpCommands.querySelectorAll('.help-command-item');
+        
+        helpSearchResults.innerHTML = '';
+        
+        if (!query) {
+            helpSearchResults.style.display = 'none';
+            commandItems.forEach(item => item.style.display = 'flex');
+            return;
+        }
+        
+        const filtered = Array.from(commandItems).filter(item => 
+            item.querySelector('.help-command').textContent.toLowerCase().includes(query)
+        );
+        
+        if (filtered.length) {
+            helpSearchResults.innerHTML = filtered.map(item => {
+                const commandText = item.querySelector('.help-command').textContent;
+                const descText = item.querySelector('.help-description').textContent;
+                const highlightedCommand = commandText.replace(
+                    new RegExp(query, 'gi'), 
+                    match => `<span class="highlight">${match}</span>`
+                );
+                
+                return `<div class="search-result">
+                    <span class="help-command">${highlightedCommand}</span>
+                    <span class="help-description">${descText}</span>
+                </div>`;
+            }).join('');
+        } else {
+            helpSearchResults.innerHTML = '<div class="search-no-results">No commands match your query</div>';
+        }
+        
+        helpSearchResults.style.display = 'block';
+    });
+    
+    // Hide search results when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!helpSearch.contains(e.target) && !helpSearchResults.contains(e.target)) {
+            helpSearchResults.style.display = 'none';
+        }
+    });
+    
+    // Click on search result
+    helpSearchResults.addEventListener('click', (e) => {
+        const searchResult = e.target.closest('.search-result');
+        if (searchResult) {
+            const commandText = searchResult.querySelector('.help-command').textContent;
+            helpSearch.value = '';
+            helpSearchResults.style.display = 'none';
+            
+            // Highlight the command in the main list
+            const commandItems = helpCommands.querySelectorAll('.help-command-item');
+            commandItems.forEach(item => {
+                item.style.display = 'flex';
+                if (item.querySelector('.help-command').textContent === commandText) {
+                    item.classList.add('highlight-item');
+                    item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => item.classList.remove('highlight-item'), 2000);
+                }
+            });
+        }
+    });
+    
+    // FAQ accordion functionality
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            // Close all other FAQs
+            faqItems.forEach(faq => faq.classList.remove('active'));
+            
+            // Toggle current FAQ
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
+    });
+    
+    // Tutorial buttons
+    document.querySelectorAll('.tutorial-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tutorial = btn.dataset.tutorial;
+            
+            // Add glowing effect to button
+            btn.classList.add('tutorial-active');
+            setTimeout(() => btn.classList.remove('tutorial-active'), 1000);
+            
+            // Display notification with terminal-style typing effect
+            const notification = document.createElement('div');
+            notification.className = 'terminal-notification';
+            notification.innerHTML = `<i class="fas fa-info-circle"></i> <span>Initializing ${tutorial} tutorial...</span>`;
+            document.getElementById('notifications').appendChild(notification);
+            
+            // Show in terminal output
+            writeToOutput(`[SYSTEM] Loading tutorial: ${tutorial.toUpperCase()}`, 'command');
+            setTimeout(() => {
+                writeToOutput(`[SYSTEM] Tutorial module "${tutorial}" is currently in development`, 'warning');
+            }, 1000);
+            
+            // Remove notification after delay
+            setTimeout(() => {
+                notification.classList.add('fadeout');
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        });
+    });
+    
+    // Add typing effect to help tab on first load
+    document.querySelector('.terminal-tab[data-tab="help"]').addEventListener('click', function() {
+        if (!this.dataset.loaded) {
+            this.dataset.loaded = true;
+            typeHelpEffects();
+        }
+    });
+    
+    // Add keyboard shortcut functionality
+    document.addEventListener('keydown', (e) => {
+        // F1 for help
+        if (e.key === 'F1') {
+            e.preventDefault();
+            document.querySelector('.terminal-tab[data-tab="help"]').click();
+        }
+        
+        // Detect Ctrl combinations
+        if (e.ctrlKey) {
+            switch (e.key.toLowerCase()) {
+                case 'o': // Ctrl+O for organize
+                    e.preventDefault();
+                    document.getElementById('organizeBtn').click();
+                    break;
+                case 's': // Ctrl+S for save settings
+                    e.preventDefault();
+                    document.getElementById('saveSettingsBtn').click();
+                    break;
+                case 'f': // Ctrl+F for search focus
+                    e.preventDefault();
+                    if (document.getElementById('helpTab').style.display !== 'none') {
+                        document.getElementById('helpSearch').focus();
+                    } else {
+                        document.getElementById('searchInput').focus();
+                    }
+                    break;
+            }
+        }
+    });
+}
+
+// Type writing effect for various help elements
+function typeHelpEffects() {
+    const elements = [
+        { selector: '.help-title', delay: 0 },
+        { selector: '.section-header h3:first-of-type', delay: 500 },
+        { selector: '.section-header h3:nth-of-type(2)', delay: 800 },
+        { selector: '.section-header h3:nth-of-type(3)', delay: 1100 }
+    ];
+    
+    elements.forEach(item => {
+        setTimeout(() => {
+            const element = document.querySelector(item.selector);
+            if (!element) return;
+            
+            const text = element.textContent;
+            element.textContent = '';
+            element.classList.add('typing');
+            
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typeInterval);
+                    element.classList.remove('typing');
+                }
+            }, 50);
+        }, item.delay);
+    });
+}
+
+// Call this function to initialize help tab when document is loaded
+document.addEventListener('DOMContentLoaded', initializeHelpTab);
+
+// Add to existing renderer.js or include as a separate script
+function writeToOutput(text, type = 'normal') {
+    const output = document.getElementById('output');
+    const line = document.createElement('div');
+    line.className = `output-line ${type}`;
+    line.textContent = text;
+    output.appendChild(line);
+    output.scrollTop = output.scrollHeight;
+}
+
+function showNotification(message, type = 'info') {
+    const notifications = document.getElementById('notifications');
+    const notification = document.createElement('div');
+    notification.className = `terminal-notification ${type}`;
+    
+    // Add icon based on type
+    let icon = 'info-circle';
+    if (type === 'success') icon = 'check-circle';
+    if (type === 'warning') icon = 'exclamation-triangle';
+    if (type === 'error') icon = 'times-circle';
+    
+    notification.innerHTML = `<i class="fas fa-${icon}"></i> <span>${message}</span>`;
+    notifications.appendChild(notification);
+    
+    // Auto-remove after delay
+    setTimeout(() => {
+        notification.classList.add('fadeout');
+        setTimeout(() => notification.remove(), 500);
+    }, 4000);
+}
+
 // Write to output with color coding
 function writeToOutput(text, type = 'normal') {
     const span = document.createElement('div');
@@ -1367,7 +1533,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 
 window.addEventListener('DOMContentLoaded', () => {
-    // Check if Chart is available
     if (typeof Chart === 'undefined') {
         console.error('Chart.js is not loaded!');
         writeToOutput('Warning: Chart.js library not loaded. Analytics functionality may be limited.', 'warning');

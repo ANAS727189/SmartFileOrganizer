@@ -4,55 +4,55 @@ from datetime import datetime
 from tqdm import tqdm
 from colorama import Fore
 from .utils import get_category, format_file_size, CATEGORY_MAP
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
 
 def organize_by_type(path):
-    """Organize files by their type/category."""
     files = [f for f in Path(path).iterdir() if f.is_file()]
-
     if not files:
         print(f"{Fore.YELLOW}[!] No files found in {path}")
         return
 
-    print(f"{Fore.CYAN}[+] Organizing {len(files)} files by type...")
+    print(f"{Fore.CYAN}[+] Organizing {len(files)} files by type in parallel...")
 
-    # Initialize category counters
     category_counts = {category: 0 for category in CATEGORY_MAP.keys()}
 
-    # Progress bar
-    progress_bar = tqdm(
-        files, 
-        bar_format=f"{Fore.BLUE}{{l_bar}}{Fore.CYAN}{{bar}} {Fore.GREEN}{{n_fmt}}/{Fore.GREEN}{{total_fmt}} [{Fore.YELLOW}{{elapsed}}<{Fore.YELLOW}{{remaining}}] {Fore.MAGENTA}{{percentage:3.0f}}%"
-    )
-
-    for file in progress_bar:
-        category = get_category(file)
-        progress_bar.set_description(f"{Fore.WHITE}Moving {file.name[:15]} to {category}")
-        
-        dest_folder = Path(path) / category
-        dest_folder.mkdir(exist_ok=True)
-        dest_file = dest_folder / file.name
-        
-        # Handle filename conflicts
-        counter = 1
-        while dest_file.exists():
-            dest_file = dest_folder / f"{file.stem}_{counter}{file.suffix}"
-            counter += 1
-        
+    def move_file(file):
         try:
-            shutil.move(str(file), str(dest_file))
-            category_counts[category] += 1
-        except Exception as e:
-            print(f"\n{Fore.RED}[ERROR] Error moving {file}: {e}")
+            category = get_category(file)
+            dest_folder = Path(path) / category
+            dest_folder.mkdir(exist_ok=True)
+            dest_file = dest_folder / file.name
 
-    # Print summary
+            counter = 1
+            while dest_file.exists():
+                dest_file = dest_folder / f"{file.stem}_{counter}{file.suffix}"
+                counter += 1
+            
+            shutil.move(str(file), str(dest_file))
+            return category, None
+        except Exception as e:
+            return None, f"\n{Fore.RED}[ERROR] Error moving {file}: {e}"
+
+    with ThreadPoolExecutor(max_workers=os.cpu_count() * 2) as executor:
+        future_to_file = {executor.submit(move_file, file): file for file in files}
+        for future in tqdm(as_completed(future_to_file), total=len(files),
+                        desc=f"{Fore.WHITE}Moving files",
+                        bar_format=f"{Fore.BLUE}{{l_bar}}{Fore.CYAN}{{bar}} {Fore.GREEN}{{n_fmt}}/{Fore.GREEN}{{total_fmt}} [{Fore.YELLOW}{{elapsed}}<{Fore.YELLOW}{{remaining}}] {Fore.MAGENTA}{{percentage:3.0f}}%"):
+            category, error = future.result()
+            if category:
+                category_counts[category] += 1
+            if error:
+                print(error)
+
     print(f"\n{Fore.GREEN}[✓] Files organized by type")
     print(f"{Fore.CYAN}[SUMMARY] Files organized by category:")
     for category, count in category_counts.items():
         if count > 0:
             print(f"{Fore.YELLOW}  - {category}: {count} files")
 
+            
 def organize_by_date(path):
-    """Organize files by their creation date (YYYY-MM folders)."""
     files = [f for f in Path(path).iterdir() if f.is_file()]
 
     if not files:
@@ -61,10 +61,8 @@ def organize_by_date(path):
 
     print(f"{Fore.CYAN}[+] Organizing {len(files)} files by creation date...")
 
-    # Track months for summary
     month_counts = {}
 
-    # Progress bar
     progress_bar = tqdm(
         files, 
         bar_format=f"{Fore.BLUE}{{l_bar}}{Fore.CYAN}{{bar}} {Fore.GREEN}{{n_fmt}}/{Fore.GREEN}{{total_fmt}} [{Fore.YELLOW}{{elapsed}}<{Fore.YELLOW}{{remaining}}] {Fore.MAGENTA}{{percentage:3.0f}}%"
@@ -80,7 +78,7 @@ def organize_by_date(path):
             dest_folder.mkdir(exist_ok=True)
             dest_file = dest_folder / file.name
             
-            # Handle filename conflicts
+
             counter = 1
             while dest_file.exists():
                 dest_file = dest_folder / f"{file.stem}_{counter}{file.suffix}"
@@ -88,7 +86,7 @@ def organize_by_date(path):
                 
             shutil.move(str(file), str(dest_file))
             
-            # Update month count
+
             if folder_name not in month_counts:
                 month_counts[folder_name] = 0
             month_counts[folder_name] += 1
@@ -96,14 +94,14 @@ def organize_by_date(path):
         except Exception as e:
             print(f"\n{Fore.RED}[ERROR] Error moving {file}: {e}")
 
-    # Print summary
+
     print(f"\n{Fore.GREEN}[✓] Files organized by date")
     print(f"{Fore.CYAN}[SUMMARY] Files organized by month:")
     for month, count in sorted(month_counts.items()):
         print(f"{Fore.YELLOW}  - {month}: {count} files")
 
 def organize_by_size(path):
-    """Organize files by their size."""
+
     files = [f for f in Path(path).iterdir() if f.is_file()]
 
     if not files:
@@ -112,7 +110,7 @@ def organize_by_size(path):
 
     print(f"{Fore.CYAN}[+] Organizing {len(files)} files by size...")
 
-    # Size categories
+
     size_categories = {
         'Tiny (< 100KB) 🔍': 100 * 1024,
         'Small (100KB - 1MB) 📎': 1 * 1024 * 1024,
@@ -121,10 +119,10 @@ def organize_by_size(path):
         'Huge (> 1GB) 🗄️': float('inf')
     }
 
-    # Track size categories for summary
+
     category_counts = {category: 0 for category in size_categories.keys()}
 
-    # Progress bar
+
     progress_bar = tqdm(
         files, 
         bar_format=f"{Fore.BLUE}{{l_bar}}{Fore.CYAN}{{bar}} {Fore.GREEN}{{n_fmt}}/{Fore.GREEN}{{total_fmt}} [{Fore.YELLOW}{{elapsed}}<{Fore.YELLOW}{{remaining}}] {Fore.MAGENTA}{{percentage:3.0f}}%"
@@ -146,7 +144,7 @@ def organize_by_size(path):
             dest_folder.mkdir(exist_ok=True)
             dest_file = dest_folder / file.name
             
-            # Handle filename conflicts
+
             counter = 1
             while dest_file.exists():
                 dest_file = dest_folder / f"{file.stem}_{counter}{file.suffix}"
@@ -158,7 +156,7 @@ def organize_by_size(path):
         except Exception as e:
             print(f"\n{Fore.RED}[ERROR] Error moving {file}: {e}")
 
-    # Print summary
+
     print(f"\n{Fore.GREEN}[✓] Files organized by size")
     print(f"{Fore.CYAN}[SUMMARY] Files organized by size category:")
     for category, count in category_counts.items():

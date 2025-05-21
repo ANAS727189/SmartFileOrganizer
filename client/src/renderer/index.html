@@ -1,4 +1,3 @@
-<!-- Chart.js inclusion fix -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,9 +5,7 @@
     <title>Terminal File Organizer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
-    <!-- Make sure Chart.js is loaded from CDN if node_modules isn't available -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <!-- Optional: Add PDF.js for PDF preview -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
 <body>
@@ -56,9 +53,8 @@
 </div>
 
     <div class="terminal">
-       
         <div class="terminal-header">
-            <h1 class="terminal-title">TERMINAL FILE ORGANIZER v1.0</h1>
+            <h1 class="terminal-title">Smart FILE ORGANIZER v1.0</h1>
             <div class="terminal-controls">
                 <div class="window-controls">
                     <button class="window-control" id="minimizeBtn">&#8722;</button>
@@ -179,28 +175,174 @@
                     <button id="saveSettingsBtn"><i class="fas fa-save"></i> Save Settings</button>
                 </div>
             </div>
-            
-            <div class="help-panel" id="helpTab" style="display: none;">
-                <div class="help-commands">
-                    <span class="help-command">organize [path]</span>
-                    <span>Organize files in the specified path</span>
-                    
-                    <span class="help-command">mode [type/date/size]</span>
-                    <span>Set organizing mode</span>
-                    
-                    <span class="help-command">duplicates [on/off]</span>
-                    <span>Enable/disable duplicate removal</span>
-                    
-                    <span class="help-command">stats</span>
-                    <span>Show file statistics</span>
-                    
-                    <span class="help-command">clear</span>
-                    <span>Clear terminal output</span>
-                    
-                    <span class="help-command">help</span>
-                    <span>Show this help</span>
+        <!-- Help Tab Redesign -->
+<div class="help-panel" id="helpTab" style="display: none;">
+    <div class="help-container">
+        <div class="help-header">
+            <div class="help-title-container">
+                <i class="fas fa-terminal terminal-icon"></i>
+                <h2 class="help-title">SYSTEM DOCUMENTATION</h2>
+            </div>
+            <div class="help-search">
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="helpSearch" placeholder="Search commands..." class="command-input">
+                </div>
+                <div id="helpSearchResults" class="help-search-results"></div>
+            </div>
+        </div>
+
+        <div class="help-content">
+            <div class="help-section">
+                <div class="section-header">
+                    <i class="fas fa-code"></i>
+                    <h3>AVAILABLE COMMANDS</h3>
+                </div>
+                <div class="help-commands" id="helpCommands">
+                    <div class="help-command-item">
+                        <span class="help-command">organize <span class="arg">[path]</span></span>
+                        <span class="help-description">Organize files in the specified path</span>
+                    </div>
+                    <div class="help-command-item">
+                        <span class="help-command">mode <span class="arg">[type/date/size]</span></span>
+                        <span class="help-description">Set organizing mode</span>
+                    </div>
+                    <div class="help-command-item">
+                        <span class="help-command">duplicates <span class="arg">[on/off]</span></span>
+                        <span class="help-description">Enable/disable duplicate removal</span>
+                    </div>
+                    <div class="help-command-item">
+                        <span class="help-command">stats</span>
+                        <span class="help-description">Show file statistics</span>
+                    </div>
+                    <div class="help-command-item">
+                        <span class="help-command">clear</span>
+                        <span class="help-description">Clear terminal output</span>
+                    </div>
+                    <div class="help-command-item">
+                        <span class="help-command">help</span>
+                        <span class="help-description">Show this help</span>
+                    </div>
                 </div>
             </div>
+
+            <div class="help-section">
+                <div class="section-header">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>TUTORIALS</h3>
+                </div>
+                <div class="help-tutorials">
+                    <div class="tutorial-item">
+                        <div class="tutorial-header">
+                            <h4>Organizing Files</h4>
+                            <button class="tutorial-btn" data-tutorial="organize">
+                                <i class="fas fa-play-circle"></i> START
+                            </button>
+                        </div>
+                        <p>Learn how to organize files by type, date, or size.</p>
+                    </div>
+                    <div class="tutorial-item">
+                        <div class="tutorial-header">
+                            <h4>Using the File Watcher</h4>
+                            <button class="tutorial-btn" data-tutorial="watcher">
+                                <i class="fas fa-play-circle"></i> START
+                            </button>
+                        </div>
+                        <p>Monitor directories in real-time for automatic organization.</p>
+                    </div>
+                    <div class="tutorial-item">
+                        <div class="tutorial-header">
+                            <h4>Custom Categories</h4>
+                            <button class="tutorial-btn" data-tutorial="categories">
+                                <i class="fas fa-play-circle"></i> START
+                            </button>
+                        </div>
+                        <p>Create and manage custom file organization categories.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <div class="section-header">
+                    <i class="fas fa-question-circle"></i>
+                    <h3>FAQs</h3>
+                </div>
+                <div class="help-faq">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <i class="fas fa-chevron-right"></i>
+                            <h4>What happens to duplicate files?</h4>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Duplicates are identified by comparing file hash signatures. When enabled, only the first instance of each unique file is kept, and all duplicates are moved to the system trash. This helps free up valuable disk space while ensuring no unique data is lost.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <i class="fas fa-chevron-right"></i>
+                            <h4>Can I customize categories?</h4>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, use the Settings tab to add or delete custom categories. Each category can include multiple file extensions and a custom icon. Your settings are saved locally and will persist between sessions.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <i class="fas fa-chevron-right"></i>
+                            <h4>How does the file watcher work?</h4>
+                        </div>
+                        <div class="faq-answer">
+                            <p>The file watcher monitors specified directories in real-time. When new files are added, they're automatically processed according to your current settings. This is ideal for download folders or shared directories.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <div class="section-header">
+                    <i class="fas fa-keyboard"></i>
+                    <h3>KEYBOARD SHORTCUTS</h3>
+                </div>
+                <div class="shortcuts-grid">
+                    <div class="shortcut-item">
+                        <span class="key-combo"><kbd>Ctrl</kbd> + <kbd>O</kbd></span>
+                        <span class="shortcut-desc">Organize Files</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="key-combo"><kbd>Ctrl</kbd> + <kbd>S</kbd></span>
+                        <span class="shortcut-desc">Save Settings</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="key-combo"><kbd>Ctrl</kbd> + <kbd>F</kbd></span>
+                        <span class="shortcut-desc">Search Files</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="key-combo"><kbd>Ctrl</kbd> + <kbd>Tab</kbd></span>
+                        <span class="shortcut-desc">Switch Tabs</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="key-combo"><kbd>Esc</kbd></span>
+                        <span class="shortcut-desc">Clear Input</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="key-combo"><kbd>F1</kbd></span>
+                        <span class="shortcut-desc">Show Help</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="help-footer">
+            <div class="system-info">
+                <div class="version-info">Terminal File Organizer v1.0</div>
+                <div class="sys-status">
+                    <span class="status-indicator online"></span>
+                    <span>System Online</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
             <div class="analytics-panel" style="display: none;" id="analyticsTab">
                 <h2 class="analytics-title">File Analytics</h2>
@@ -222,3 +364,4 @@
     <script src="./js/renderer.js"></script>
 </body>
 </html>
+
