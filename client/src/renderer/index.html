@@ -150,33 +150,157 @@
                 </div>
             </div>
             
+            
+<!-- Stats Tab -->
+<div class="file-stats" id="statsTab">
+    <div class="stats-container">
+        <div class="stats-header">
+            <div class="stats-title-container">
+                <i class="fas fa-chart-line stats-icon"></i>
+                <h2 class="stats-title">SYSTEM ANALYTICS</h2>
+            </div>
+        </div>
 
-            <div class="file-stats" style="display: none;" id="statsTab">
-                <div class="file-stat">
-                    Files: <span class="stat-value" id="fileCount">0</span>
+        <div class="stats-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <i class="fas fa-file stat-card-icon"></i>
+                        <h3 class="stat-card-title">Total Files</h3>
+                    </div>
+                    <span class="stat-value" id="fileCount">1,247</span>
+                    <p class="stat-description">Files processed</p>
                 </div>
-                <div class="file-stat">
-                    Duplicates: <span class="stat-value" id="dupCount">0</span>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <i class="fas fa-copy stat-card-icon"></i>
+                        <h3 class="stat-card-title">Duplicates</h3>
+                    </div>
+                    <span class="stat-value" id="dupCount">23</span>
+                    <p class="stat-description">Duplicate files found</p>
                 </div>
-                <div class="file-stat">
-                    Space Saved: <span class="stat-value" id="spaceSaved">0 KB</span>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <i class="fas fa-hdd stat-card-icon"></i>
+                        <h3 class="stat-card-title">Space Saved</h3>
+                    </div>
+                    <span class="stat-value" id="spaceSaved">2.3 GB</span>
+                    <p class="stat-description">Storage optimized</p>
                 </div>
-                <div class="file-stat">
-                    Last Run: <span class="stat-value" id="lastRun">Never</span>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <i class="fas fa-clock stat-card-icon"></i>
+                        <h3 class="stat-card-title">Last Run</h3>
+                    </div>
+                    <span class="stat-value" id="lastRun">2h ago</span>
+                    <p class="stat-description">Last organization</p>
                 </div>
             </div>
 
-            <div class="settings-panel" id="settingsTab" style="display: none;">
-                <div class="category-list" id="categoryList"></div>
+            <div class="stats-history">
+                <h3><i class="fas fa-history"></i>Recent Activity</h3>
+                <div class="history-item">
+                    <span class="history-action">Organized Downloads folder</span>
+                    <span class="history-time">2 hours ago</span>
+                </div>
+                <div class="history-item">
+                    <span class="history-action">Removed 15 duplicate images</span>
+                    <span class="history-time">1 day ago</span>
+                </div>
+                <div class="history-item">
+                    <span class="history-action">Created custom category: Work Docs</span>
+                    <span class="history-time">3 days ago</span>
+                </div>
+                <div class="history-item">
+                    <span class="history-action">Organized by file type</span>
+                    <span class="history-time">1 week ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Tab -->
+<div class="settings-panel" id="settingsTab" style="display: none;">
+    <div class="settings-container">
+        <div class="settings-header">
+            <div class="settings-title-container">
+                <i class="fas fa-cog settings-icon"></i>
+                <h2 class="settings-title">SYSTEM CONFIGURATION</h2>
+            </div>
+        </div>
+
+        <div class="settings-content">
+            <div class="settings-section">
+                <div class="section-header">
+                    <i class="fas fa-tags"></i>
+                    <h3>FILE CATEGORIES</h3>
+                </div>
+                
+                <div class="category-list" id="categoryList">
+                    <div class="category-item">
+                        <div class="category-info">
+                            <div class="category-name">📄 Documents</div>
+                            <div class="category-extensions">.pdf, .doc, .docx, .txt</div>
+                        </div>
+                        <div class="category-actions">
+                            <button class="action-btn"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn delete"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                    
+                    <div class="category-item">
+                        <div class="category-info">
+                            <div class="category-name">🖼️ Images</div>
+                            <div class="category-extensions">.jpg, .jpeg, .png, .gif, .bmp</div>
+                        </div>
+                        <div class="category-actions">
+                            <button class="action-btn"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn delete"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                    
+                    <div class="category-item">
+                        <div class="category-info">
+                            <div class="category-name">🎵 Music</div>
+                            <div class="category-extensions">.mp3, .wav, .flac, .m4a</div>
+                        </div>
+                        <div class="category-actions">
+                            <button class="action-btn"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-btn delete"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="category-form">
-                    <input type="text" id="categoryName" placeholder="Category Name (e.g., Music 🎵)">
-                    <input type="text" id="categoryExts" placeholder="Extensions (e.g., .mp3, .wav)">
-                    <button id="addCategoryBtn"><i class="fas fa-plus"></i> Add Category</button>
-                    <button id="saveSettingsBtn"><i class="fas fa-save"></i> Save Settings</button>
+                    <div class="form-group">
+                        <label for="categoryName">Category Name</label>
+                        <input type="text" id="categoryName" placeholder="e.g., Work Files 📋">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryExts">File Extensions</label>
+                        <input type="text" id="categoryExts" placeholder="e.g., .xlsx, .ppt, .csv">
+                    </div>
+                    <div class="form-actions">
+                        <button class="form-btn" id="addCategoryBtn">
+                            <i class="fas fa-plus"></i> Add Category
+                        </button>
+                        <button class="form-btn" id="saveSettingsBtn">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
                 </div>
             </div>
-        <!-- Help Tab Redesign -->
-<div class="help-panel" id="helpTab" style="display: none;">
+        </div>
+    </div>
+</div>
+
+
+                <!-- Help Tab -->
+            <div class="help-panel" id="helpTab" style="display: none;">
     <div class="help-container">
         <div class="help-header">
             <div class="help-title-container">
@@ -342,7 +466,7 @@
             </div>
         </div>
     </div>
-</div>
+            </div>
 
             <div class="analytics-panel" style="display: none;" id="analyticsTab">
                 <h2 class="analytics-title">File Analytics</h2>
