@@ -469,13 +469,52 @@
             </div>
 
             <div class="analytics-panel" style="display: none;" id="analyticsTab">
-                <h2 class="analytics-title">File Analytics</h2>
+                <h2 class="analytics-title" data-text="File Analytics Dashboard">File Analytics Dashboard</h2>
+                
+                <div class="analytics-summary">
+                    <div class="summary-card">
+                        <div class="summary-icon"><i class="fas fa-file-alt"></i></div>
+                        <div class="summary-data">
+                            <div class="summary-value total-files">0</div>
+                            <div class="summary-label">Files Organized</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon"><i class="fas fa-copy"></i></div>
+                        <div class="summary-data">
+                            <div class="summary-value duplicates-removed">0</div>
+                            <div class="summary-label">Duplicates Removed</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon"><i class="fas fa-save"></i></div>
+                        <div class="summary-data">
+                            <div class="summary-value space-saved">0 KB</div>
+                            <div class="summary-label">Space Saved</div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="analytics-container">
                     <div class="chart-container">
+                        <h3 class="chart-title">File Types Distribution</h3>
                         <canvas id="fileTypeChart"></canvas>
                     </div>
                     <div class="chart-container">
+                        <h3 class="chart-title">File Sizes Distribution</h3>
                         <canvas id="fileSizeChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="chart-title">Files Organized Over Time</h3>
+                        <canvas id="filesOverTimeChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="chart-title">File Categories Comparison</h3>
+                        <canvas id="fileCategoriesChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="chart-title">Space Saved by Duplicates</h3>
+                        <canvas id="spaceSavedChart"></canvas>
                     </div>
                 </div>
             </div>

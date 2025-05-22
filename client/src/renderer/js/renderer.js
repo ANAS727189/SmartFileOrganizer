@@ -36,6 +36,7 @@ const closePreviewBtn = document.getElementById('closePreviewBtn');
 const analyticsTab = document.getElementById('analyticsTab');
 let fileTypeChart = null;
 let fileSizeChart = null;
+let filesOverTimeChart, fileCategoriesChart, spaceSavedChart;
 
 const analyticsPath = path.join(__dirname, '../../../userData/analytics.json');
 
@@ -211,6 +212,22 @@ fileListElement.addEventListener('click', (e) => {
     }
 });
 
+function animateNumber(element, start, end, duration) {
+    let startTime = null;
+    function animation(currentTime) {
+        if (!startTime) startTime = currentTime;
+        const progress = (currentTime - startTime) / duration;
+        const currentNumber = Math.min(Math.floor(progress * (end - start) + start), end);
+        element.textContent = currentNumber;
+        if (progress < 1) {
+            requestAnimationFrame(animation);
+        } else {
+            element.textContent = end;
+        }
+    }
+    requestAnimationFrame(animation);
+}
+
 
 async function updateAnalytics() {
     const analyticsData = await loadAnalyticsData();
@@ -219,341 +236,393 @@ async function updateAnalytics() {
         return;
     }
 
-    if (fileTypeChart) fileTypeChart.destroy();
-    if (fileSizeChart) fileSizeChart.destroy();
+    // Destroy existing charts to prevent overlap
+    [fileTypeChart, fileSizeChart, filesOverTimeChart, fileCategoriesChart, spaceSavedChart]
+        .forEach(chart => chart && chart.destroy());
 
-    analyticsTab.innerHTML = `
-    <h2 class="analytics-title">File Analytics Dashboard</h2>
-    
-    <div class="analytics-summary">
-        <div class="summary-card">
-            <div class="summary-icon"><i class="fas fa-file-alt"></i></div>
-            <div class="summary-data">
-                <div class="summary-value">${analyticsData.totalFilesOrganized || 0}</div>
-                <div class="summary-label">Files Organized</div>
-            </div>
-        </div>
-        <div class="summary-card">
-            <div class="summary-icon"><i class="fas fa-copy"></i></div>
-            <div class="summary-data">
-                <div class="summary-value">${analyticsData.totalDuplicatesRemoved || 0}</div>
-                <div class="summary-label">Duplicates Removed</div>
-            </div>
-        </div>
-        <div class="summary-card">
-            <div class="summary-icon"><i class="fas fa-save"></i></div>
-            <div class="summary-data">
-                <div class="summary-value">${formatFileSize(analyticsData.totalSpaceSaved || 0)}</div>
-                <div class="summary-label">Space Saved</div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="analytics-grid">
-        <div class="chart-container">
-            <h3 class="chart-title">File Types Distribution</h3>
-            <canvas id="fileTypeChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <h3 class="chart-title">File Sizes</h3>
-            <canvas id="fileSizeChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <h3 class="chart-title">Storage Efficiency</h3>
-            <canvas id="efficiencyChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <h3 class="chart-title">File Activity</h3>
-            <canvas id="fileActivityChart"></canvas>
-        </div>
-        <div class="chart-container wide">
-            <h3 class="chart-title">Category Distribution</h3>
-            <canvas id="categoryDistributionChart"></canvas>
-        </div>
-    </div>
-`;
+    // Update summary stats with animations
+    const totalFilesEl = document.querySelector('.total-files');
+    const duplicatesEl = document.querySelector('.duplicates-removed');
+    const spaceEl = document.querySelector('.space-saved');
+    animateNumber(totalFilesEl, 0, analyticsData.totalFilesOrganized || 0, 1000);
+    animateNumber(duplicatesEl, 0, analyticsData.totalDuplicatesRemoved || 0, 1000);
+    spaceEl.textContent = formatFileSize(analyticsData.totalSpaceSaved || 0);
 
-try {
-    const pieCtx = document.getElementById('fileTypeChart').getContext('2d');
-    const fileTypes = Object.keys(analyticsData.fileTypes);
-    const fileTypeCounts = Object.values(analyticsData.fileTypes);
-    const colorPalette = generateColorPalette(fileTypes.length);
-    
-    fileTypeChart = new Chart(pieCtx, {
-        type: 'doughnut',
-        data: {
-            labels: fileTypes,
-            datasets: [{
-                data: fileTypeCounts,
-                backgroundColor: colorPalette,
-                borderColor: 'rgba(0, 10, 0, 0.1)',
-                borderWidth: 1,
-                hoverOffset: 15
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    position: 'right',
-                    labels: { 
-                        color: '#00FF00',
-                        font: {
-                            family: 'monospace',
-                            size: 11
-                        },
-                        boxWidth: 15,
-                        padding: 10
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#00FF00',
-                    bodyColor: '#00FF00',
-                    borderColor: '#00FF00',
-                    borderWidth: 1,
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.label || '';
-                            const value = context.raw;
-                            const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                            const percentage = Math.round((value / total) * 100);
-                            return `${label}: ${value} (${percentage}%)`;
-                        }
-                    }
-                }
+    // Cyberpunk Color Palette
+    const colors = {
+        primary: '#00f5ff',      // Electric cyan
+        secondary: '#ff073a',    // Neon red
+        tertiary: '#7209b7',     // Deep purple
+        accent: '#00ff9f',       // Matrix green
+        warning: '#ffb700',      // Electric orange
+        dark: '#0a0a0a',         // Deep black
+        darkGray: '#1a1a1a',     // Dark gray
+        mediumGray: '#2d2d2d',   // Medium gray
+        lightGray: '#404040',    // Light gray
+        glow: '#00f5ff33'        // Cyan glow (with alpha)
+    };
+
+    // Professional gradient colors for charts
+    const gradientColors = [
+        colors.primary,
+        colors.accent,
+        colors.tertiary,
+        colors.warning,
+        colors.secondary,
+        '#4cc9f0',  // Light blue
+        '#b084cc',  // Lavender
+        '#f72585'   // Hot pink
+    ];
+
+    // Create gradient backgrounds
+    const createGradient = (ctx, color1, color2) => {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, color1);
+        gradient.addColorStop(1, color2);
+        return gradient;
+    };
+
+    // Chart.js Configuration Options
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            tooltip: {
+                backgroundColor: colors.darkGray,
+                titleColor: colors.primary,
+                bodyColor: '#ffffff',
+                borderColor: colors.primary,
+                borderWidth: 2,
+                cornerRadius: 8,
+                titleFont: { family: 'monospace', size: 14, weight: 'bold' },
+                bodyFont: { family: 'monospace', size: 12 },
+                displayColors: true,
+                boxShadow: `0 0 20px ${colors.glow}`
             },
-            cutout: '60%',
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: {
-                animateRotate: true,
-                animateScale: true,
-                duration: 1500,
-                easing: 'easeOutQuart'
+            legend: {
+                labels: {
+                    color: '#ffffff',
+                    font: { family: 'monospace', size: 12, weight: '500' },
+                    usePointStyle: true,
+                    pointStyle: 'circle',
+                    padding: 15
+                }
             }
-        }
-    });
-    const barCtx = document.getElementById('fileSizeChart').getContext('2d');
-    const sizeCategories = Object.keys(analyticsData.sizeCategories);
-    const sizeCounts = Object.values(analyticsData.sizeCategories);
-    
-    fileSizeChart = new Chart(barCtx, {
-        type: 'bar',
-        data: {
-            labels: sizeCategories,
-            datasets: [{
-                label: 'File Count by Size',
-                data: sizeCounts,
-                backgroundColor: 'rgba(0, 255, 0, 0.7)',
-                borderColor: 'rgba(0, 255, 0, 1)',
-                borderWidth: 1,
-                borderRadius: 5,
-                barPercentage: 0.7,
-                categoryPercentage: 0.7
-            }]
         },
-        options: {
-            scales: {
-                y: { 
-                    beginAtZero: true,
-                    ticks: { 
-                        color: '#00FF00',
-                        font: {
-                            family: 'monospace'
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(0, 255, 0, 0.1)'
-                    }
-                },
-                x: { 
-                    ticks: { 
-                        color: '#00FF00',
-                        font: {
-                            family: 'monospace'
-                        },
-                        maxRotation: 45,
-                        minRotation: 45
-                    },
-                    grid: {
-                        display: false
-                    }
-                }
-            },
-            plugins: {
-                legend: { 
-                    display: false 
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#00FF00',
-                    bodyColor: '#00FF00',
-                    borderColor: '#00FF00',
-                    borderWidth: 1
-                }
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: {
-                duration: 1500,
-                easing: 'easeOutQuart'
-            }
-        }
-    });
-
-    const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
-    const totalFilesBeforeOpt = analyticsData.totalFilesOrganized + analyticsData.totalDuplicatesRemoved;
-    const efficiencyPercentage = totalFilesBeforeOpt > 0 
-        ? Math.round((analyticsData.totalDuplicatesRemoved / totalFilesBeforeOpt) * 100) 
-        : 0;
-    
-    window.efficiencyChart = new Chart(efficiencyCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Space Saved', 'Current Space'],
-            datasets: [{
-                data: [efficiencyPercentage, 100 - efficiencyPercentage],
-                backgroundColor: [
-                    'rgba(0, 255, 0, 0.9)',
-                    'rgba(0, 40, 0, 0.2)'
-                ],
-                borderWidth: 0,
-                circumference: 180,
-                rotation: 270
-            }]
-        },
-        options: {
-            plugins: {
-                legend: { display: false },
-                tooltip: { enabled: false }
-            },
-            cutout: '75%',
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
-
-    const efficiency = efficiencyPercentage;
-    const centerText = {
-        id: 'centerText',
-        afterDatasetsDraw(chart, args, pluginOptions) {
-            const { ctx, data } = chart;
-            const centerX = chart.getDatasetMeta(0).data[0].x;
-            const centerY = chart.getDatasetMeta(0).data[0].y + 20;
-
-            ctx.save();
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.font = 'bold 24px monospace';
-            ctx.fillStyle = '#00FF00';
-            ctx.fillText(`${efficiency}%`, centerX, centerY);
-            
-            ctx.font = '12px monospace';
-            ctx.fillStyle = 'rgba(0, 255, 0, 0.7)';
-            ctx.fillText('Efficiency', centerX, centerY + 25);
-            ctx.restore();
+        animation: {
+            duration: 2000,
+            easing: 'easeOutQuart'
         }
     };
-    
-    Chart.register(centerText);
-    const fileActivityCtx = document.getElementById('fileActivityChart').getContext('2d');
-    const activityData = generateActivityData(analyticsData.totalFilesOrganized || 0);
-    
-    window.fileActivityChart = new Chart(fileActivityCtx, {
-        type: 'line',
+
+    // 1. Doughnut Chart: File Types Distribution
+    const fileTypeCtx = document.getElementById('fileTypeChart').getContext('2d');
+    const fileTypeLabels = Object.keys(analyticsData.fileTypes);
+    const fileTypeBackgrounds = fileTypeLabels.map((_, index) => {
+        const color = gradientColors[index % gradientColors.length];
+        return color + '99'; // Add transparency
+    });
+    const fileTypeBorders = fileTypeLabels.map((_, index) => 
+        gradientColors[index % gradientColors.length]
+    );
+
+    fileTypeChart = new Chart(fileTypeCtx, {
+        type: 'doughnut',
         data: {
-            labels: activityData.labels,
+            labels: fileTypeLabels,
             datasets: [{
-                label: 'Files Processed',
-                data: activityData.values,
-                borderColor: '#00FF00',
-                backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                borderWidth: 2,
-                pointBackgroundColor: '#00FF00',
-                pointBorderColor: 'rgba(0, 0, 0, 0.6)',
-                pointRadius: 4,
-                pointHoverRadius: 6,
-                fill: true,
-                tension: 0.4
+                data: Object.values(analyticsData.fileTypes),
+                backgroundColor: fileTypeBackgrounds,
+                borderColor: fileTypeBorders,
+                borderWidth: 3,
+                hoverOffset: 15,
+                hoverBorderWidth: 4,
+                hoverBorderColor: colors.primary
             }]
         },
         options: {
+            ...commonOptions,
+            cutout: '65%',
+            plugins: {
+                ...commonOptions.plugins,
+                legend: { 
+                    position: 'right',
+                    labels: {
+                        ...commonOptions.plugins.legend.labels,
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                return data.labels.map((label, i) => ({
+                                    text: label,
+                                    fillStyle: data.datasets[0].borderColor[i],
+                                    strokeStyle: data.datasets[0].borderColor[i],
+                                    lineWidth: 2,
+                                    hidden: false,
+                                    index: i
+                                }));
+                            }
+                            return [];
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // 2. Bar Chart: File Sizes Distribution
+    const fileSizeCtx = document.getElementById('fileSizeChart').getContext('2d');
+    const sizeGradient = createGradient(fileSizeCtx, colors.primary + '80', colors.accent + '20');
+    
+    fileSizeChart = new Chart(fileSizeCtx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(analyticsData.sizeCategories || { '<1MB': 0, '1-10MB': 0, '>10MB': 0 }),
+            datasets: [{
+                label: 'Files by Size',
+                data: Object.values(analyticsData.sizeCategories || { '<1MB': 0, '1-10MB': 0, '>10MB': 0 }),
+                backgroundColor: sizeGradient,
+                borderColor: colors.primary,
+                borderWidth: 2,
+                borderRadius: 6,
+                borderSkipped: false,
+                hoverBackgroundColor: colors.primary + '60',
+                hoverBorderColor: colors.accent,
+                hoverBorderWidth: 3
+            }]
+        },
+        options: {
+            ...commonOptions,
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { color: '#00FF00' },
-                    grid: { color: 'rgba(0, 255, 0, 0.1)' }
+                    ticks: { 
+                        color: '#ffffff',
+                        font: { family: 'monospace', size: 11 }
+                    },
+                    grid: { 
+                        color: colors.mediumGray,
+                        lineWidth: 1
+                    },
+                    border: { color: colors.lightGray }
                 },
                 x: {
-                    ticks: { color: '#00FF00' },
-                    grid: { display: false }
+                    ticks: { 
+                        color: '#ffffff',
+                        font: { family: 'monospace', size: 11, weight: '500' }
+                    },
+                    grid: { display: false },
+                    border: { color: colors.lightGray }
                 }
             },
             plugins: {
+                ...commonOptions.plugins,
                 legend: { display: false }
-            },
-            responsive: true,
-            maintainAspectRatio: false
+            }
         }
     });
-    const catDistCtx = document.getElementById('categoryDistributionChart').getContext('2d');
-    const categoryData = generateCategoryData(settings, analyticsData);
-    window.categoryDistributionChart = new Chart(catDistCtx, {
-        type: 'radar',
+
+    // 3. Line Chart: Files Organized Over Time
+    const filesOverTimeCtx = document.getElementById('filesOverTimeChart').getContext('2d');
+    const timeData = generateTimeData(analyticsData.totalFilesOrganized);
+    const lineGradient = createGradient(filesOverTimeCtx, colors.accent + '60', colors.tertiary + '10');
+    
+    filesOverTimeChart = new Chart(filesOverTimeCtx, {
+        type: 'line',
         data: {
-            labels: categoryData.labels,
+            labels: ['7d ago', '6d ago', '5d ago', '4d ago', '3d ago', '2d ago', 'Today'],
             datasets: [{
-                label: 'File Distribution',
-                data: categoryData.values,
-                backgroundColor: 'rgba(0, 255, 0, 0.2)',
-                borderColor: '#00FF00',
-                borderWidth: 2,
-                pointBackgroundColor: '#00FF00',
-                pointBorderColor: '#000',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: '#00FF00',
-                pointRadius: 4
+                label: 'Files Organized',
+                data: timeData,
+                borderColor: colors.accent,
+                backgroundColor: lineGradient,
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointBackgroundColor: colors.accent,
+                pointBorderColor: colors.dark,
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: colors.primary,
+                pointHoverBorderColor: colors.dark,
+                pointHoverBorderWidth: 3
             }]
         },
         options: {
+            ...commonOptions,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { 
+                        color: '#ffffff',
+                        font: { family: 'monospace', size: 11 }
+                    },
+                    grid: { 
+                        color: colors.mediumGray,
+                        lineWidth: 1
+                    },
+                    border: { color: colors.lightGray }
+                },
+                x: {
+                    ticks: { 
+                        color: '#ffffff',
+                        font: { family: 'monospace', size: 11 }
+                    },
+                    grid: { 
+                        color: colors.mediumGray + '40',
+                        lineWidth: 1
+                    },
+                    border: { color: colors.lightGray }
+                }
+            },
+            plugins: {
+                ...commonOptions.plugins,
+                legend: { display: false }
+            },
+            elements: {
+                line: {
+                    shadowColor: colors.accent + '80',
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowOffsetY: 0
+                }
+            }
+        }
+    });
+
+    // 4. Radar Chart: File Categories Comparison
+    const fileCategoriesCtx = document.getElementById('fileCategoriesChart').getContext('2d');
+    const categories = ['Documents', 'Images', 'Videos', 'Audio', 'Other'];
+    const radarGradient = createGradient(fileCategoriesCtx, colors.tertiary + '40', colors.secondary + '10');
+    
+    fileCategoriesChart = new Chart(fileCategoriesCtx, {
+        type: 'radar',
+        data: {
+            labels: categories,
+            datasets: [{
+                label: 'Categories',
+                data: categories.map(cat => analyticsData.fileTypes[cat.toLowerCase()] || 0),
+                backgroundColor: radarGradient,
+                borderColor: colors.tertiary,
+                borderWidth: 3,
+                pointBackgroundColor: colors.warning,
+                pointBorderColor: colors.dark,
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: colors.primary,
+                pointHoverBorderColor: colors.dark
+            }]
+        },
+        options: {
+            ...commonOptions,
             scales: {
                 r: {
-                    beginAtZero: true,
-                    angleLines: { color: 'rgba(0, 255, 0, 0.2)' },
-                    grid: { color: 'rgba(0, 255, 0, 0.2)' },
-                    pointLabels: { 
-                        color: '#00FF00',
-                        font: { family: 'monospace' } 
-                    },
                     ticks: { 
-                        backdropColor: 'transparent',
-                        color: 'rgba(0, 255, 0, 0.7)',
-                        showLabelBackdrop: false
+                        color: '#ffffff',
+                        font: { family: 'monospace', size: 10 },
+                        backdropColor: 'transparent'
+                    },
+                    grid: { 
+                        color: colors.mediumGray,
+                        lineWidth: 1
+                    },
+                    angleLines: { 
+                        color: colors.lightGray,
+                        lineWidth: 1
+                    },
+                    pointLabels: {
+                        color: '#ffffff',
+                        font: { family: 'monospace', size: 12, weight: '500' }
                     }
                 }
             },
             plugins: {
+                ...commonOptions.plugins,
                 legend: { display: false }
-            },
-            responsive: true,
-            maintainAspectRatio: false
+            }
         }
     });
 
-} catch (error) {
-    console.error('Chart rendering error:', error);
-    analyticsTab.innerHTML = `<div class="error">Error rendering charts: ${error.message}</div>`;
+    // 5. Polar Area Chart: Space Saved by Duplicates
+    const spaceSavedCtx = document.getElementById('spaceSavedChart').getContext('2d');
+    const polarGradient1 = createGradient(spaceSavedCtx, colors.secondary + '80', colors.warning + '40');
+    const polarGradient2 = createGradient(spaceSavedCtx, colors.darkGray + '60', colors.mediumGray + '20');
+    
+    spaceSavedChart = new Chart(spaceSavedCtx, {
+        type: 'polarArea',
+        data: {
+            labels: ['Space Saved', 'Remaining Space'],
+            datasets: [{
+                data: [analyticsData.totalSpaceSaved || 0, 1000 - (analyticsData.totalSpaceSaved || 0)],
+                backgroundColor: [polarGradient1, polarGradient2],
+                borderColor: [colors.secondary, colors.mediumGray],
+                borderWidth: 2,
+                hoverBorderWidth: 4,
+                hoverBorderColor: [colors.primary, colors.lightGray]
+            }]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                r: {
+                    ticks: { 
+                        color: '#ffffff',
+                        font: { family: 'monospace', size: 10 },
+                        backdropColor: 'transparent'
+                    },
+                    grid: { 
+                        color: colors.mediumGray,
+                        lineWidth: 1
+                    },
+                    angleLines: { 
+                        color: colors.lightGray,
+                        lineWidth: 1
+                    }
+                }
+            },
+            plugins: {
+                ...commonOptions.plugins,
+                legend: { 
+                    position: 'bottom',
+                    labels: {
+                        ...commonOptions.plugins.legend.labels,
+                        padding: 20
+                    }
+                }
+            }
+        }
+    });
 }
 
+// Helper Functions
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 KB';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function generateTimeData(totalFiles) {
+    const data = [];
+    for (let i = 6; i >= 0; i--) {
+        data.push(Math.floor(totalFiles * (Math.random() * 0.3 + (i / 7))));
+    }
+    return data;
 }
 
 function generateColorPalette(count) {
+    const cyberpunkColors = [
+        '#00ff9f', // Neon green
+        '#00b8ff', // Neon blue
+        '#9d00ff', // Neon purple
+        '#ff00ff', // Neon pink
+        '#ff0057'  // Neon red
+    ];
     const colors = [];
     for (let i = 0; i < count; i++) {
-        const hue = 120; 
-        const saturation = 80 + Math.random() * 20; 
-        const lightness = 30 + (i * 40 / count); 
-        colors.push(`hsla(${hue}, ${saturation}%, ${lightness}%, 0.9)`);
+        colors.push(cyberpunkColors[i % cyberpunkColors.length]);
     }
     return colors;
 }
