@@ -1,8 +1,8 @@
-# Terminal File Organizer
+# Smart File Organizer
 
-![Terminal File Organizer Screenshot](assets/screenshot.png)
+![Smart File Organizer Screenshot](assets/screenshot.png)
 
-**Terminal File Organizer** is a cross-platform desktop application built with Electron and Python that automates file organization, removes duplicates, and provides analytics. Featuring a cyberpunk-inspired terminal UI, it offers a powerful yet user-friendly way to manage files efficiently.
+**Smart File Organizer** is a cross-platform desktop application built with Electron and Python that automates file organization, removes duplicates, and provides analytics. Featuring a cyberpunk-inspired terminal UI, it offers a powerful yet user-friendly way to manage files efficiently.
 
 ## Features
 
