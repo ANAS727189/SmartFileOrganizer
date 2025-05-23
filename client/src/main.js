@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import { spawn } from 'child_process';
 
 let watcherProcess = null;
+let mainWindow = null; // Store the main window globally
 
 function createWindow() {
     const __filename = fileURLToPath(import.meta.url);
@@ -25,7 +26,7 @@ function createWindow() {
             console.error(`Error initializing settings.json: ${err.message}`);
         });
     
-    const win = new BrowserWindow({
+    mainWindow = new BrowserWindow({ // Store the window in the global variable
         width: 1000,
         height: 700,
         webPreferences: {
@@ -33,19 +34,20 @@ function createWindow() {
             contextIsolation: false,
         },
         title: "Terminal File Organizer",
-        frame: false, 
+        frame: false,
         backgroundColor: '#0C0C0C',
         icon: path.join(__dirname, 'assets/icon.png')
     });
-    win.loadFile('./src/renderer/index.html');
+    mainWindow.loadFile('./src/renderer/index.html');
+
+    // Handle the open-folder-dialog IPC call
     ipcMain.handle('open-folder-dialog', async (event) => {
-        const result = await dialog.showOpenDialog({
+        const result = await dialog.showOpenDialog(mainWindow, { // Pass mainWindow as the parent
             properties: ['openDirectory'],
             title: 'Select Directory to Organize'
         });
         return result;
     });
-
 
     ipcMain.handle('save-settings', async (event, settings) => {
         try {
@@ -94,19 +96,20 @@ function createWindow() {
         }
         return { categories: {} };
     });
+
     ipcMain.on('close-app', () => {
-        win.close();
+        mainWindow.close();
     });
 
     ipcMain.on('minimize-app', () => {
-        win.minimize();
+        mainWindow.minimize();
     });
 
     ipcMain.on('maximize-app', () => {
-        if (win.isMaximized()) {
-            win.unmaximize();
+        if (mainWindow.isMaximized()) {
+            mainWindow.unmaximize();
         } else {
-            win.maximize();
+            mainWindow.maximize();
         }
     });
 
@@ -116,7 +119,6 @@ function createWindow() {
             return;
         }
         const projectRoot = path.resolve(__dirname, '..', '..'); 
-
         console.log('Python cwd will be:', projectRoot);
         
         watcherProcess = spawn('python3', ['-m', 'server.watcher', directory, mode], {
@@ -151,8 +153,9 @@ function createWindow() {
             event.reply('watcher-status', 'No watcher running');
         }
     });
+
     if (process.env.NODE_ENV === 'development') {
-        win.webContents.openDevTools();
+        mainWindow.webContents.openDevTools();
     }
 }
 

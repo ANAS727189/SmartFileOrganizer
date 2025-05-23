@@ -103,22 +103,33 @@ body, html {
     overflow: hidden;
 }
 
+/* Correct the terminal-output padding */
 .terminal-output {
     flex-grow: 1;
     background-color: var(--panel-bg);
     border: 1px solid var(--dark-accent);
     border-radius: var(--border-radius);
-    padding: 15px;
-    padding-left: none;
+    padding: 15px 15px 15px 10px;  /* Top, right, bottom, no left padding */
     overflow-y: auto;
     margin-bottom: 15px;
-    white-space: pre-wrap;
+    white-space: pre-wrap;      /* Preserves ASCII art spacing */
+    text-align: left;           /* Forces left alignment */
     font-size: 0.9rem;
     line-height: 1.4;
     position: relative;
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3), 0 0 5px var(--glow-color);
 }
 
+/* New wrapper for centering content */
+/* .output-wrapper {
+    display: flex;
+    flex-direction: column;
+  
+} */
+
+/* .output-line {
+    padding-left: 60px;
+} */
 .terminal-output::-webkit-scrollbar {
     width: 8px;
 }
@@ -321,6 +332,7 @@ button i {
     display: flex;
     gap: 8px;
 }
+
 
 /* Search box improvements */
 .search-container {
@@ -556,6 +568,7 @@ button i {
     font-size: 1rem;
 }
 
+
 /* Enhanced ascii art */
 .ascii-art {
     font-size: 0.5rem;
@@ -564,6 +577,7 @@ button i {
     color: var(--accent-color);
     margin-bottom: 20px;
     text-shadow: 0 0 5px var(--glow-color);
+    margin-left: -70px;
 }
 
 /* Checkbox styling */
@@ -2079,3 +2093,4 @@ kbd {
         margin: 5px 0;
     }
 }
+
