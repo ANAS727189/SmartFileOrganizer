@@ -1,16 +1,16 @@
 {
   "fileTypes": {
-    "mp4": 6,
+    "mp4": 7,
     "png": 2
   },
   "sizeCategories": {
     "Tiny (<100KB)": 1,
     "Small (100KB-1MB)": 1,
-    "Medium (1MB-100MB)": 6,
+    "Medium (1MB-100MB)": 7,
     "Large (100MB-1GB)": 0,
     "Huge (>1GB)": 0
   },
-  "totalFilesOrganized": 8,
+  "totalFilesOrganized": 9,
   "totalDuplicatesRemoved": 0,
   "totalSpaceSaved": 0
 }

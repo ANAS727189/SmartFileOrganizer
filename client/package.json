@@ -1,24 +1,61 @@
 {
-  "name": "client",
+  "name": "terminal-file-organizer",
+  "productName": "Terminal File Organizer",
   "version": "1.0.0",
+  "description": "A desktop app for organizing files using a terminal-like interface",
   "main": "./src/main.js",
   "type": "module",
+  "author": "Anas Khan",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "package": "electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.9",
+    "pdfjs-dist": "^5.2.133"
+  },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
     "electron": "^36.2.1",
+    "electron-builder": "^25.1.8",
     "postcss": "^8.5.3",
-    "tailwindcss": "^4.1.7"
+    "tailwindcss": "^4.1.7",
+    "@tailwindcss/postcss": "^4.1.7"
   },
-  "scripts": {
-    "start": "electron ."
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "@tailwindcss/postcss": "^4.1.7",
-    "chart.js": "^4.4.9",
-    "pdfjs-dist": "^5.2.133"
+  "build": {
+    "appId": "com.anas-khan.terminalfileorganizer",
+    "productName": "Terminal File Organizer",
+    "asar": true,
+    "files": [
+      "src/**/*",
+      "!src/assets/**/*.{psd,sketch}",
+      "server/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../server/",
+        "to": "server/",
+        "filter": [
+          "**/*",
+          "!__pycache__/**",
+          "!*.pyc"
+        ]
+      }
+    ],
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "src/assets/icons/file-icon.ico"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "src/assets/icons/file-icon.ico"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "src/assets/icons/file-icon.png"
+    }
   }
 }

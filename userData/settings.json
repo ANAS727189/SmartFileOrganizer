@@ -1,15 +1,85 @@
 {
   "categories": {
-    "Your Music 🎵": [".mp3", ".wav", ".aac", ".flac", ".ogg", ".m4a"],
-    "Your Videos 🎥": [".mp4", ".mkv", ".mov", ".avi", ".wmv", ".webm"],
-    "Your Images 🖼️": [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp"],
-    "Your Documents 📄": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".md"],
-    "Your Archives 🗜️": [".zip", ".rar", ".7z", ".tar", ".gz", ".bz2"],
-    "Your Scripts 👨‍💻": [".py", ".js", ".html", ".css", ".cpp", ".c", ".java", ".sh", ".php", ".rb"],
-    "Your Executables ⚙️": [".exe", ".msi", ".app", ".dmg", ".deb", ".rpm"],
-    "Your Fonts 🅰️": [".ttf", ".otf", ".woff", ".woff2"],
-    "Your E-books 📚": [".epub", ".mobi", ".azw3", ".fb2"],
+    "Your Music 🎵": [
+      ".mp3",
+      ".wav",
+      ".aac",
+      ".flac",
+      ".ogg",
+      ".m4a"
+    ],
+    "Your Videos 🎥": [
+      ".mp4",
+      ".mkv",
+      ".mov",
+      ".avi",
+      ".wmv",
+      ".webm"
+    ],
+    "Your Images 🖼️": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".gif",
+      ".bmp",
+      ".svg",
+      ".webp"
+    ],
+    "Your Documents 📄": [
+      ".pdf",
+      ".doc",
+      ".docx",
+      ".xls",
+      ".xlsx",
+      ".ppt",
+      ".pptx",
+      ".txt",
+      ".rtf",
+      ".md"
+    ],
+    "Your Archives 🗜️": [
+      ".zip",
+      ".rar",
+      ".7z",
+      ".tar",
+      ".gz",
+      ".bz2"
+    ],
+    "Your Scripts 👨‍💻": [
+      ".py",
+      ".js",
+      ".html",
+      ".css",
+      ".cpp",
+      ".c",
+      ".java",
+      ".sh",
+      ".php",
+      ".rb"
+    ],
+    "Your Executables ⚙️": [
+      ".exe",
+      ".msi",
+      ".app",
+      ".dmg",
+      ".deb",
+      ".rpm"
+    ],
+    "Your Fonts 🅰️": [
+      ".ttf",
+      ".otf",
+      ".woff",
+      ".woff2"
+    ],
+    "Your E-books 📚": [
+      ".epub",
+      ".mobi",
+      ".azw3",
+      ".fb2"
+    ],
     "Others ❓": [],
-    "My Reports": [".csv"]
+    "My Reports": [
+      ".csv"
+    ]
   }
 }
