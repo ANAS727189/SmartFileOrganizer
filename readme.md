@@ -1,6 +1,10 @@
 # Smart File Organizer
 
-![Smart File Organizer Screenshot](assets/screenshot.png)
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=NVqu0f_Mrs0">
+    <img src="https://img.youtube.com/vi/NVqu0f_Mrs0/hqdefault.jpg" alt="AutoML-MLOps Demo" />
+  </a>
+</div>
 
 **Smart File Organizer** is a cross-platform desktop application built with Electron and Python that automates file organization, removes duplicates, and provides analytics. Featuring a cyberpunk-inspired terminal UI, it offers a powerful yet user-friendly way to manage files efficiently.
 
