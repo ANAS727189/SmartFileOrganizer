@@ -92,13 +92,6 @@ watchdog==3.0.0
 - **Help System** - Access the Help tab or type `help` for commands and tutorials
 - **File Preview** - Select any file to preview its contents within the application
 
-## Screenshots
-
-### Main Interface
-![Main Interface](assets/main-interface.png)
-
-### Analytics Dashboard
-![Analytics Dashboard](assets/analytics-dashboard.png)
 
 ## Project Structure
 
@@ -142,17 +135,6 @@ This project demonstrates several technical achievements:
 - **Data Visualization** - Uses Chart.js to transform file analysis into actionable insights
 - **Persistent Configuration** - Maintains user preferences and custom rules across sessions
 
-## Future Improvements
-
-- **Testing Framework** - Add comprehensive unit tests using Jest for frontend and pytest for backend
-- **Plugin System** - Implement a plugin architecture for custom organization modes and extensions
-- **Accessibility** - Enhance the UI with ARIA attributes and keyboard navigation support
-- **Performance Optimization** - Implement batch processing for very large directories (100,000+ files)
-- **Cloud Integration** - Add support for cloud storage services like Dropbox, Google Drive, and OneDrive
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Contributing
 
